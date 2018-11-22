@@ -3,4 +3,4 @@ project(xIAL C)
 
 set(CMAKE_C_STANDARD 99)
 
-add_executable(xIAL main.c)
+add_executable(xIAL main.c loadfile.c loadfile.h)

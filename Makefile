@@ -10,7 +10,7 @@ EXTRAFLAGS = -g
 
 ##### TARGETS - first target is default
 sptree: main.o loadfile.o
-	gcc $^ $(CFLAGS) $(EXTRAFLAGS) -o sptree
+	gcc main.o loadfile.o $(CFLAGS) $(EXTRAFLAGS) -o sptree
 
 clean:
 	rm -f *.o
@@ -20,7 +20,7 @@ pack:
 
 ##### OBJECT FILES
 main.o: main.c
-	gcc -c $^ $(CFLAGS) $(EXTRAFLAGS) -o main.o
+	gcc -c main.c $(CFLAGS) $(EXTRAFLAGS) -o main.o
 
 loadfile.o: loadfile.c loadfile.h
 	gcc -c loadfile.c $(CFLAGS) $(EXTRAFLAGS) -o loadfile.o

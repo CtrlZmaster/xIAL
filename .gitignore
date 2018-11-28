@@ -58,3 +58,6 @@ cmake-build-debug/
 # Experimental folder
 experimental/
 
+# Executables
+sptree
+

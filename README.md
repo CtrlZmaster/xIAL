@@ -1,5 +1,5 @@
 # xIAL
-Náradný projekt IAL - 7. Minimálna kostra grafu
+Náhradný projekt IAL - 7. Minimálna kostra grafu
 
 ## Otváranie súborov
 ### Formát súboru
@@ -9,11 +9,11 @@ Formát súboru je veľmi jednoduchý. Ako prvý reťazec musí súbor obsahova�
 
 Na ďalšom riadku nasleduje počet uzlov zadaný číselne ( číslicami 0-9), ukončený EOL.
 
-Na novom riadku začína maticou uložený graf - ak nazeráme na maticu ako tabuľku, v záhlaví bude obsahovať názvy uzlov obalené v úvodzovkách. Názvy uzlov sú reťazce obsahujúce ľubovoľné znaky s výnimkou úvodzoviek, ktoré možno použiť len v tvare " \" ". Reťazce sú oddelené čiarkou.
+Na novom riadku budú uložené názvy uzlov v takom poradí, akom sú zapísané v matici vodorovne zľava doprava a zvislo zvrchu nadol. Názvy uzlov sú reťazce obsahujúce ľubovoľné znaky. Reťazce sú oddelené čiarkou. V prípade, ýe názov uzlu obsahuje čiarku, musí byť escapovaná znakom '\' => (takto\,).
+Na ďalšom riadku začína maticou uložený graf - prvok matice je váha hrany (max. 2^64) spájajúca vrchol reprezentovaný indexom v matici, ktorý je namapovaný na názvy uzlov. Ak uzly nie sú spojené, bude prítomné malé písmeno 'x'. Všetky váhy hrán alebo písmená x sú oddelené čiarkami, nie sú tolerované žiadne biele znaky.
 
-Prvý riadok matice obsahuje len názvy uzlov.
-Druhý až posledný riadok obsahuje práve jeden vyššie špecifikovaný názov a ďalej číselné hodnoty maximálne 2^64, ktoré reprezentujú váhu hrany. Ak uzly nie sú spojené, bude prítomné malé písmeno 'x'. Všetky váhy hrán alebo písmená x sú oddelené čiarkami, nie sú tolerované žiadne biele znaky.
+ 
 
 ### Implementačné limity
-Veľkosť grafu - max. 2^8 uzlov a 2^16 hrán.
+Veľkosť grafu - max. 2^8 uzlov a 2^16 hrán. Maximálna váha hrany je (2^64/2)-1, povolené sú aj záporné váhy.
 Pri načítaní súboru je program ošetrený proti pretečeniu, ktoré hrozí pri väčších grafoch.

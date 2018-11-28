@@ -15,9 +15,31 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdint.h>
+#include <inttypes.h>
 #include <string.h>
+#include <wchar.h>
+#include <locale.h>
+#include <errno.h>
 
-#define FILETYPE_STR ".xIALAdjMatrix"
-#define FILETYPE_STRLEN strlen(FILETYPE_STR)
+#define FILETYPE_STR L".xIALAdjMatrix"
+#define FILETYPE_STRLEN wcslen(FILETYPE_STR)
 
+#define TOKEN_ALLOC_UNIT 10
+
+typedef struct token {
+  wchar_t* string;
+  size_t length;
+} token_t;
+
+typedef struct adj_matrix {
+  int64_t **matrix;
+  wchar_t **vertex_names;
+} adj_matrix_t;
+
+int loadToMatrix(char *filename, adj_matrix_t *adj_matrix, uint8_t *vertices);
+int lexFSM(FILE * file_ptr, uint8_t lex_num, token_t* temp_token, wchar_t *vertex_names[], int64_t edge_weights[]);
+int flush_temp_token(token_t *temp_token);
+int realloc_temp_token(token_t *temp_token, size_t size);
+int token_to_retval(token_t *temp_token, size_t index, char mode, wchar_t *vertex_names[], int64_t edge_weights[]);
+void free_matrix(adj_matrix_t *adj_matrix, uint8_t vertices);
 #endif //XIAL_LOADFILE_H

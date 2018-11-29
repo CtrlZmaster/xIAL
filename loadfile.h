@@ -34,12 +34,13 @@ typedef struct token {
 typedef struct adj_matrix {
   int64_t **matrix;
   wchar_t **vertex_names;
+  uint8_t vertices;
 } adj_matrix_t;
 
-int loadToMatrix(char *filename, adj_matrix_t *adj_matrix, uint8_t *vertices);
+int loadToMatrix(FILE *file_ptr, adj_matrix_t *adj_matrix);
 int lexFSM(FILE * file_ptr, uint8_t lex_num, token_t* temp_token, wchar_t *vertex_names[], int64_t edge_weights[]);
 int flush_temp_token(token_t *temp_token);
 int realloc_temp_token(token_t *temp_token, size_t size);
 int token_to_retval(token_t *temp_token, size_t index, char mode, wchar_t *vertex_names[], int64_t edge_weights[]);
-void free_matrix(adj_matrix_t *adj_matrix, uint8_t vertices);
+void free_matrix(adj_matrix_t *adj_matrix);
 #endif //XIAL_LOADFILE_H

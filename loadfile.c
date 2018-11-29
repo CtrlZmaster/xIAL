@@ -2,21 +2,20 @@
  * Project: IAL ...
  * File: loadfile.c
  * Title: 7. Minimum weight spanning tree
- * Description: ...
+ * Description: Module contains all functions for loading a file
  * Author: František Balázsy (xbalaz08@stud.feec.vutbr.cz),
  *         Michal Pospíšil (xpospi95@stud.fit.vutbr.cz),
  *         Nikola Timková (xtimko01@stud.fit.vutbr.cz)
  */
 
-
-#include "loadfile.h"
-
 /*
- * Function loads file with name filename in current directory.
- * Return codes:
- * 0 = SUCCESS
+ * This module implements loading the file (format specified in documentation) and its syntax check. Matrix is then
+ * checked again, to confirm that it represents a graph.
+ *
+ * Return codes in this module:
+ *  0 = SUCCESS
  * -1 = Can't open file.
- * -2 = Unexpected EOF
+ * -2 = Unexpected EOF.
  * -3 = Wrong call parameters.
  * -4 = Wrong file type.
  * -5 = Memory allocation error.
@@ -24,13 +23,14 @@
  * -101 = Too many vertices.
  * -102 = Value out of range.
  */
-int loadToMatrix(char *filename, adj_matrix_t *adj_matrix, uint8_t *vertices) {
+
+
+#include "loadfile.h"
+
+
+//_Main loading function - loads matrix from a file named filename and then passes matrix (if it's valid) to adj_matrix.
+int loadToMatrix(FILE *file_ptr, adj_matrix_t *adj_matrix) {
   int err_code = 0;
-  FILE * file_ptr;
-  // Open the file and check the return code
-  if((file_ptr = fopen(filename, "r")) == NULL) {
-    return -1;
-  }
 
   // Check syntax of the opened file
   // Check the first line with file type declaration
@@ -72,7 +72,7 @@ int loadToMatrix(char *filename, adj_matrix_t *adj_matrix, uint8_t *vertices) {
     // Checking that number fits into receiver type
     return -101;
   }
-  *vertices = (uint8_t)ul_size;
+  adj_matrix->vertices = (uint8_t)ul_size;
 
   // Can't use fgetws - don't know length of the line!!!
   // Prepare token for first use of lexFSM
@@ -87,30 +87,30 @@ int loadToMatrix(char *filename, adj_matrix_t *adj_matrix, uint8_t *vertices) {
   }
 
   // Create final destination for vertex names
-  adj_matrix->vertex_names = calloc(*vertices, sizeof(wchar_t*));
+  adj_matrix->vertex_names = calloc(adj_matrix->vertices, sizeof(wchar_t*));
   if(adj_matrix->vertex_names == NULL) {
     return -5;
   }
   // Fill it with vertex names
-  err_code = lexFSM(file_ptr, *vertices, temp_token, adj_matrix->vertex_names, NULL);
+  err_code = lexFSM(file_ptr, adj_matrix->vertices, temp_token, adj_matrix->vertex_names, NULL);
   if(err_code) {
     return err_code;
   }
 
   // Allocate rows
-  adj_matrix->matrix = malloc(*vertices * sizeof(int64_t*));
+  adj_matrix->matrix = malloc(adj_matrix->vertices * sizeof(int64_t*));
   if(adj_matrix->matrix == NULL) {
     return -5;
   }
   // Iterate through rows
-  for(uint8_t i = 0; i < *vertices; i++) {
+  for(uint8_t i = 0; i < adj_matrix->vertices; i++) {
     // Allocate all columns (create array of cells)
-    adj_matrix->matrix[i] = malloc(*vertices * sizeof(int64_t));
+    adj_matrix->matrix[i] = malloc(adj_matrix->vertices * sizeof(int64_t));
     if(adj_matrix->matrix == NULL) {
       return -5;
     }
     // Fill the matrix
-    err_code = lexFSM(file_ptr, *vertices, temp_token, NULL, adj_matrix->matrix[i]);
+    err_code = lexFSM(file_ptr, adj_matrix->vertices, temp_token, NULL, adj_matrix->matrix[i]);
     if(err_code) {
       return err_code;
     }
@@ -293,9 +293,9 @@ int token_to_retval(token_t *temp_token, size_t index, char mode, wchar_t *verte
 
 
 // Frees the matrix
-void free_matrix(adj_matrix_t *adj_matrix, uint8_t vertices) {
+void free_matrix(adj_matrix_t *adj_matrix) {
   //Free vertex names
-  for(uint8_t i = 0; i < vertices; i++) {
+  for(uint8_t i = 0; i < adj_matrix->vertices; i++) {
     free(adj_matrix->vertex_names[i]);
   }
 
@@ -303,7 +303,7 @@ void free_matrix(adj_matrix_t *adj_matrix, uint8_t vertices) {
   free(adj_matrix->vertex_names);
 
   // Iterate through rows
-  for(uint8_t i = 0; i < vertices; i++) {
+  for(uint8_t i = 0; i < adj_matrix->vertices; i++) {
     free(adj_matrix->matrix[i]);
   }
   // Clean row pointers

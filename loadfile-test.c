@@ -27,7 +27,7 @@ int main(int argc, char *argv[]) {
 
     err_code = loadToMatrix(file_ptr, matrix);
     if(err_code) {
-        printf("File loading failed...\n");
+        loaderror(err_code);
         return err_code;
     }
 

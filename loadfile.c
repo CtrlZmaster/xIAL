@@ -22,13 +22,16 @@
  * -100 = Syntax error.
  * -101 = Too many vertices.
  * -102 = Value out of range.
+ * -103 = Edge starts from the same vertex as it ends in.
+ * -104 = Mirrored index contains different weight.
  */
 
 
 #include "loadfile.h"
 
 
-//_Main loading function - loads matrix from a file named filename and then passes matrix (if it's valid) to adj_matrix.
+//_Main loading function - loads matrix from a file named filename and then passes
+// matrix (if the file is valid) to adj_matrix.
 int loadToMatrix(FILE *file_ptr, adj_matrix_t *adj_matrix) {
   int err_code = 0;
 
@@ -118,7 +121,9 @@ int loadToMatrix(FILE *file_ptr, adj_matrix_t *adj_matrix) {
 
   free(temp_token->string);
   free(temp_token);
-  return 0;
+
+  err_code = is_graph(adj_matrix);
+  return err_code;
 }
 
 // Reads a line from file and divides it into lexemes. Internally uses two modes to distinguish between reading vertex names,
@@ -291,6 +296,26 @@ int token_to_retval(token_t *temp_token, size_t index, char mode, wchar_t *verte
   return 0;
 }
 
+// Function checks that matrix represents a graph
+int is_graph(adj_matrix_t *adj_matrix) {
+  // Goes through half of the matrix
+  for(int i = 0; i < adj_matrix->vertices; i++) {
+    for(int j = i; j < adj_matrix->vertices; j++) {
+      // Checks that there are zeroes on the diagonal
+      if(i == j) {
+        if(adj_matrix->matrix[i][j] != 0) {
+          return -103;
+        }
+      }
+      // Comparing mirrored edge weight
+      if(adj_matrix->matrix[i][j] != adj_matrix->matrix[j][i]) {
+        return -104;
+      }
+    }
+  }
+  return 0;
+}
+
 
 // Frees the matrix
 void free_matrix(adj_matrix_t *adj_matrix) {
@@ -311,4 +336,45 @@ void free_matrix(adj_matrix_t *adj_matrix) {
 
   // Free the struct
   free(adj_matrix);
+}
+
+// Writes error message to the stdout
+void loaderror(int retval) {
+  printf("ERROR: ");
+  switch(retval) {
+    case 0:
+      break;
+    case -1:
+      printf("Can't open the specified file.\n");
+      break;
+    case -2:
+      printf("Unexpected end of file.\n");
+      break;
+    case -3:
+      printf("Wrong function call parameters (internal error).\n");
+      break;
+    case -4:
+      printf("Unsupported file type.\n");
+      break;
+    case -5:
+      printf("Memory allocation error.\n");
+      break;
+    case -100:
+      printf("Syntax error in graph representation.\n");
+      break;
+    case -101:
+      printf("Too many vertices.\n");
+      break;
+    case -102:
+      printf("Value out of range.\n");
+      break;
+    case -103:
+      printf("Edge starts from the same vertex as it ends in.\n");
+      break;
+    case -104:
+      printf("Mirrored index contains different weight.\n");
+      break;
+    default:
+      break;
+  }
 }

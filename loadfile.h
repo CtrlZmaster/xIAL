@@ -42,5 +42,7 @@ int lexFSM(FILE * file_ptr, uint8_t lex_num, token_t* temp_token, wchar_t *verte
 int flush_temp_token(token_t *temp_token);
 int realloc_temp_token(token_t *temp_token, size_t size);
 int token_to_retval(token_t *temp_token, size_t index, char mode, wchar_t *vertex_names[], int64_t edge_weights[]);
+int is_graph(adj_matrix_t *adj_matrix);
 void free_matrix(adj_matrix_t *adj_matrix);
+void loaderror(int retval);
 #endif //XIAL_LOADFILE_H

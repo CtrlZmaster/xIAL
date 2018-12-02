@@ -221,9 +221,10 @@ int lexFSM(FILE * file_ptr, uint8_t lex_num, token_t* temp_token, wchar_t *verte
     num_flag = 0;
     sign_flag = 0;
 
-    // Space is running out, need to alloc new space to token
-    if((lex_len - (TOKEN_ALLOC_UNIT - 1)) % TOKEN_ALLOC_UNIT == 0) {
-      realloc_temp_token(temp_token, lex_len + 2 + TOKEN_ALLOC_UNIT);
+    // Space is running out, need to alloc new space to token (+1 <=> lex_len is indexed from 0
+    // and realloc is needed when rewriting last index - represented by TOKEN_ALLOC_UNIT length)
+    if((lex_len + 1) % TOKEN_ALLOC_UNIT == 0) {
+      realloc_temp_token(temp_token, lex_len + 1 + TOKEN_ALLOC_UNIT);
     }
     // Current char is correct and is written to temporary  token
     temp_token->string[lex_len] = cur_char;
@@ -257,12 +258,11 @@ int flush_temp_token(token_t *temp_token) {
 
 int realloc_temp_token(token_t *temp_token, size_t size) {
   // Copy data to local stash
-  wchar_t temp_data[size];
-  wcscpy(temp_data, temp_token->string);
+  wchar_t temp_data[size + 1];
+  wcsncpy(temp_data, temp_token->string, temp_token->length);
 
   // Free old memory
   free(temp_token->string);
-  temp_token->length = 0;
 
   // Allocate new memory
   temp_token->string = calloc(sizeof(wchar_t), size);

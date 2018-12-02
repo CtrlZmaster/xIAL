@@ -12,6 +12,10 @@ Preklad prebieha pomocou utility make. Pre zostavenie finálneho programu stač�
 Program sa preloží do binárneho súboru s názvom sptree (skratka zo spanning tree). Program očakáva len jeden argument a tým je buď cesta k súboru, alebo prepínač -h, ktorý vypíše krátku nápovedu.
 ## Otváranie súborov
 ### Formát súboru
+#### Reprezentácia grafu
+Graf sme sa rozhodli reprezentovať maticou susednosti. Naše rozhodnutie ovplyvnilo, že jej veľkosť je ľahko vypočítateľná z počtu uzlov a na rozdiel od ukladanie samotných hrán sa nevyskytuje redundancia názvov uzlov ak vychádza viac hrán z jedného vrcholu. Navyše tento modul môže byť použitý s minimálnymi zmenami na čítanie súborov, ktoré by reprezentovali orientované grafy v inom programe.
+
+#### Špecifikácia súborového formátu
 Kódovanie súboru je UTF-8 alebo kódovania s ním kompatibilné (ASCII).
 
 Formát súboru je veľmi jednoduchý. Pri jeho návrhu sme vychádzali z formátu CSV, ktorý je veľmi jednoduchý na spracovanie a kontrolu.

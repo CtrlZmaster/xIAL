@@ -20,10 +20,12 @@
  * -4 = Wrong file type.
  * -5 = Memory allocation error.
  * -100 = Syntax error.
- * -101 = Too many vertices.
+ * -101 = Vertex count out of range.
  * -102 = Value out of range.
  * -103 = Edge starts from the same vertex as it ends in.
  * -104 = Mirrored index contains different weight.
+ * -105 = Line is missing one or more elements.
+ * -106 = Line has more elements than specified.
  */
 
 
@@ -157,7 +159,7 @@ int lexFSM(FILE * file_ptr, uint8_t lex_num, token_t* temp_token, wchar_t *verte
   for(int lex_len = 0;  (cur_char = fgetwc(file_ptr)) != '\n'; lex_len++) {
     // Checks for lines longer than number of vertices
     if(cur_lex_num > lex_num - 1) {
-      return -1;
+      return -106;
     }
     // FSM
     switch(cur_char) {
@@ -241,6 +243,11 @@ int lexFSM(FILE * file_ptr, uint8_t lex_num, token_t* temp_token, wchar_t *verte
     return err_code;
   }
 
+  // Check that the line had enough lexemes
+  if(cur_lex_num + 1 != lex_num) {
+    return -105;
+  }
+
   return err_code;
 }
 
@@ -271,7 +278,7 @@ int realloc_temp_token(token_t *temp_token, size_t size) {
   }
 
   // Copy back to bigger memory from stash
-  wcscpy(temp_token->string, temp_data);
+  wcsncpy(temp_token->string, temp_data, temp_token->length);
 
   return 0;
 }
@@ -290,7 +297,7 @@ int token_to_retval(token_t *temp_token, size_t index, char mode, wchar_t *verte
     if(vertex_names[index] == NULL) {
       return -5;
     }
-    wcscpy(vertex_names[index], temp_token->string);
+    wcsncpy(vertex_names[index], temp_token->string, temp_token->length);
   }
 
   return 0;
@@ -340,39 +347,45 @@ void free_matrix(adj_matrix_t *adj_matrix) {
 
 // Writes error message to the stdout
 void loaderror(int retval) {
-  printf("ERROR: ");
+  fprintf(stderr, "ERROR: ");
   switch(retval) {
     case 0:
       break;
     case -1:
-      printf("Can't open the specified file.\n");
+      fprintf(stderr, "Can't open the specified file.\n");
       break;
     case -2:
-      printf("Unexpected end of file.\n");
+      fprintf(stderr, "Unexpected end of file.\n");
       break;
     case -3:
-      printf("Wrong function call parameters (internal error).\n");
+      fprintf(stderr, "Wrong function call parameters (internal error).\n");
       break;
     case -4:
-      printf("Unsupported file type.\n");
+      fprintf(stderr, "Unsupported file type.\n");
       break;
     case -5:
-      printf("Memory allocation error.\n");
+      fprintf(stderr, "Memory allocation error.\n");
       break;
     case -100:
-      printf("Syntax error in graph representation.\n");
+      fprintf(stderr, "Syntax error in graph representation.\n");
       break;
     case -101:
-      printf("Too many vertices.\n");
+      fprintf(stderr, "Vertex count out of range.\n");
       break;
     case -102:
-      printf("Value out of range.\n");
+      fprintf(stderr, "Value out of range.\n");
       break;
     case -103:
-      printf("Edge starts from the same vertex as it ends in.\n");
+      fprintf(stderr, "Edge starts from the same vertex as it ends in.\n");
       break;
     case -104:
-      printf("Mirrored index contains different weight.\n");
+      fprintf(stderr, "Mirrored index contains different weight.\n");
+      break;
+    case -105:
+      fprintf(stderr, "Line is missing one or more elements.\n");
+      break;
+    case -106:
+      fprintf(stderr, "Line has more elements than specified.\n");
       break;
     default:
       break;

@@ -26,6 +26,7 @@
  * -104 = Mirrored index contains different weight.
  * -105 = Line is missing one or more elements.
  * -106 = Line has more elements than specified.
+ * -107 = File contains unexpected content.
  */
 
 
@@ -121,6 +122,10 @@ int loadToMatrix(FILE *file_ptr, adj_matrix_t *adj_matrix) {
     }
   }
 
+  if(fgetwc(file_ptr) != WEOF) {
+    return -107;
+  }
+
   free(temp_token->string);
   free(temp_token);
 
@@ -192,21 +197,25 @@ int lexFSM(FILE * file_ptr, uint8_t lex_num, token_t* temp_token, wchar_t *verte
           // If the ESC flag is set, it will be reset and '\' will be written
           // to the lexeme after the switch
           esc_flag = 0;
-          continue;
         }
         else {
           esc_flag = 1;
+          lex_len--;
+          continue;
         }
         break;
       case '1': case '2': case '3': case '4':
       case '5': case '6': case '7': case '8':
       case '9': case '0':
         num_flag = 1;
+        esc_flag = 0;
         break;
       case '-': case '+':
         sign_flag = 1;
+        esc_flag = 0;
         break;
       default:
+        esc_flag = 0;
         break;
     }
 
@@ -386,6 +395,9 @@ void loaderror(int retval) {
       break;
     case -106:
       fprintf(stderr, "Line has more elements than specified.\n");
+      break;
+    case -107:
+      fprintf(stderr, "File contains unexpected content.\n");
       break;
     default:
       break;

@@ -12,6 +12,9 @@ EXTRAFLAGS = -g
 sptree: main.o loadfile.o
 	gcc main.o loadfile.o $(CFLAGS) $(EXTRAFLAGS) -o sptree
 
+sptree-timer: main-timer.o loadfile.o
+	gcc main-timer.o loadfile.o $(CFLAGS) $(EXTRAFLAGS) -o sptree-timer
+
 ldfl-test: loadfile-test.o loadfile.o
 	gcc loadfile-test.o loadfile.o $(CFLAGS) $(EXTRAFLAGS) -o ldfl-test
 
@@ -24,6 +27,9 @@ pack:
 ##### OBJECT FILES
 main.o: main.c main.h
 	gcc -c main.c $(CFLAGS) $(EXTRAFLAGS) -o main.o
+
+main-timer.o: main.c main.h
+	gcc -c main.c -DTIME $(CFLAGS) $(EXTRAFLAGS) -o main-timer.o
 
 loadfile.o: loadfile.c loadfile.h
 	gcc -c loadfile.c $(CFLAGS) $(EXTRAFLAGS) -o loadfile.o

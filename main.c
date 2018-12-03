@@ -11,16 +11,69 @@
 #include "main.h"
 #include "loadfile.h"
 
-void loadEdges(adj_matrix_t *matrix, graph_t *graph);
-void dealloc(graph_t *graph);
-void execute(adj_matrix_t *matrix);
-void printMST(graph_t *graph, partition_t *partition);
-void partition(partition_t *tmp, graph_t *graph, partition_t **pListHead);
-void pListAppendNode(partition_t **pListHead, partition_t *node);
-void pListRemoveNode(partition_t **pListHead, partition_t **pListTMP);
-void sortEdges(graph_t *graph);
-void printList(partition_t ** pListHead, graph_t * graph);
+int main(int argc, char *argv[])
+{
+    // Resets locale from C standard to environment locale (particularly ASCII to UTF-8)
+    setlocale(LC_ALL, "");
 
+    int err_code = 0;
+
+    // Checking parameters
+    if (argc != 2)
+    {
+        fprintf(stderr, "ERROR: Wrong parameter count. Rerun with -h for help.\n");
+    }
+
+    FILE *file_ptr;
+    if (!strcmp(argv[1], "-h"))
+    {
+        print_help();
+        return 0;
+    }
+    else
+    {
+        // Open the file and check the return code
+        if ((file_ptr = fopen(argv[1], "r")) == NULL)
+        {
+            fprintf(stderr, "ERROR: File with name \"%s\" couldn't be opened.\n", argv[1]);
+            return -1;
+        }
+    }
+
+    // Allocate matrix structure where the adjacency matrix will be stored
+    adj_matrix_t *matrix = malloc(sizeof(adj_matrix_t));
+    if (matrix == NULL)
+    {
+        fprintf(stderr, "ERROR: Allocation error. Check the amount of free memory on your system.\n");
+        return -5;
+    }
+
+    // Fill the matrix from the file
+    err_code = loadToMatrix(file_ptr, matrix);
+    if (err_code)
+    {
+        return err_code;
+    }
+
+    fclose(file_ptr);
+
+    //TODO: Kruskal/Prim
+    #ifdef TIME
+    clock_t begin = clock();
+    #endif
+
+    execute(matrix);
+
+    #ifdef TIME
+    clock_t end = clock();
+    long double clocks_to_ms = CLOCKS_PER_SEC / 1000;
+    double time_spent = (double)(end - begin) / clocks_to_ms;
+    printf("%f\n", time_spent);
+    #endif
+    // Freeing the memory
+    free_matrix(matrix);
+    return err_code;
+}
 
 void loadEdges(adj_matrix_t *matrix, graph_t *graph)
 {
@@ -80,18 +133,18 @@ void sortEdges(graph_t *graph)
 
 /**
  * Finds MST of a given partition with weight less or equal to maxWeight
- * 
+ *
  * typedef struct partition {
  *   char * status;
  *   uint64_t weight;
  *   bool found;
  *   struct partition * next;
  * } partition_t;
- * 
- * 
- * 
+ *
+ *
+ *
  * if MST found, sets partition->found
- * 
+ *
  * MST is then represented by partition->status  (included, excluded, open)
  * MST weight is partition->weight
 **/
@@ -167,61 +220,6 @@ void kruskal(graph_t *graph, partition_t *partition, uint64_t maxWeight)
 // printf("\n\n\n");
 
 
-}
-
-int main(int argc, char *argv[])
-{
-    // Resets locale from C standard to environment locale (particularly ASCII to UTF-8)
-    setlocale(LC_ALL, "");
-
-    int err_code = 0;
-
-    // Checking parameters
-    if (argc != 2)
-    {
-        fprintf(stderr, "ERROR: Wrong parameter count. Rerun with -h for help.\n");
-    }
-
-    FILE *file_ptr;
-    if (!strcmp(argv[1], "-h"))
-    {
-        print_help();
-        return 0;
-    }
-    else
-    {
-        // Open the file and check the return code
-        if ((file_ptr = fopen(argv[1], "r")) == NULL)
-        {
-            fprintf(stderr, "ERROR: File with name \"%s\" couldn't be opened.\n", argv[1]);
-            return -1;
-        }
-    }
-
-    // Allocate matrix structure where the adjacency matrix will be stored
-    adj_matrix_t *matrix = malloc(sizeof(adj_matrix_t));
-    if (matrix == NULL)
-    {
-        fprintf(stderr, "ERROR: Allocation error. Check the amount of free memory on your system.\n");
-        return -5;
-    }
-
-    // Fill the matrix from the file
-    err_code = loadToMatrix(file_ptr, matrix);
-    if (err_code)
-    {
-        return err_code;
-    }
-
-    fclose(file_ptr);
-
-    //TODO: Kruskal/Prim
-
-    execute(matrix);
-
-    // Freeing the memory
-    free_matrix(matrix);
-    return err_code;
 }
 
 void execute(adj_matrix_t *matrix)
@@ -302,10 +300,10 @@ void execute(adj_matrix_t *matrix)
             {
                 minWeight = pListTMP->weight;
                 foundMinWeight = true;
-
+                #ifndef TIME
                 // Write MST of Ps to Output_File
                 printMST(&graph, pListTMP);
-
+                #endif
                 // Remove Ps from List
                 partition_t *tmp = pListTMP;
 

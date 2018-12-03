@@ -21,6 +21,7 @@
 #include <wchar.h>
 #include <locale.h>
 #include <errno.h>
+#include <time.h>
 
 
 void print_help(void);
@@ -50,6 +51,14 @@ typedef struct partition {
   struct partition * next;
 } partition_t;
 
-
+void loadEdges(adj_matrix_t *matrix, graph_t *graph);
+void dealloc(graph_t *graph);
+void execute(adj_matrix_t *matrix);
+void printMST(graph_t *graph, partition_t *partition);
+void partition(partition_t *tmp, graph_t *graph, partition_t **pListHead);
+void pListAppendNode(partition_t **pListHead, partition_t *node);
+void pListRemoveNode(partition_t **pListHead, partition_t **pListTMP);
+void sortEdges(graph_t *graph);
+void printList(partition_t ** pListHead, graph_t * graph);
 
 #endif //XIAL_MAIN_H

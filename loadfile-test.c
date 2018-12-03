@@ -32,14 +32,14 @@ int main(int argc, char *argv[]) {
     }
 
     for(uint8_t i = 0; i < matrix->vertices; i++) {
-        printf("%ls, ",matrix->vertex_names[i]);
+        wprintf(L"%ls, ",matrix->vertex_names[i]);
     }
-    putchar('\n');
+    wprintf(L"\n");
     for(uint8_t i = 0; i < matrix->vertices; i++) {
         for(uint8_t j = 0; j < matrix->vertices; j++) {
-            printf("%" PRIu64 ",",matrix->matrix[i][j]);
+            wprintf(L"%ld,",matrix->matrix[i][j]);
         }
-        putchar('\n');
+        wprintf(L"\n");
     }
 
     free_matrix(matrix);

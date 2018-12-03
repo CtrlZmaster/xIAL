@@ -33,3 +33,13 @@ Súbor musí byť ukončený hneď za posledným EOL znakom.
 ### Implementačné limity
 Veľkosť grafu - max. 2^8-1 uzlov a 2^16-1 hrán. Maximálna váha hrany je 2^64/2-1, povolené sú aj záporné váhy (min. -(2^64/2)).
 Pri načítaní súboru je program ošetrený proti pretečeniu, ktoré hrozí pri väčších grafoch a proti syntaktickým a lexikálnym chybám v súbore.
+
+## Testovanie programu
+Projekt sme testovali ručne za pomoci špeciálne vytvorených testovacích súborov, ktoré testovali limity alebo obsahovali syntaktické chyby v súboroch, aby sme overili funkčnosť programu za každých okolností.
+
+V budúcnosti sa dá tento prístup vylepšiť napríklad vytvorením automatického bash skriptu, ktorý otestuje súbory a bude kontrolovať úspešnosť programu automaticky. Pre rozsah tohto projektu sme to však nepovažovali za potrebné.
+
+Na syntakticky správnych vstupoch sme testovali, či program naozaj vypíše všetky nájdené minimálne kostry. Opäť sme vytvorili súbory tak, aby sme pokryli čo najviac možností, ktoré môžu nastať pri použití programu reálnym používateľom.
+
+### Zaujímavé pasáže z testovania
+Zaujímavosťou je, že chybové ukončenie programu na Ubuntu 18.04 64-bit po vypísaní chybového hlásenia a ukončení funkcie main je zakončené signálom Zrušené (SIGABRT) a Chyba segmentácie (SIGSEGV). Toto správanie bolo potvrdené len na systéme Ubuntu 18.04 64-bit. Na referenčnom stroji eva, merlin, a na PC s macOS sa takáto chyba nedá zreprodukovať. Plné vyšetrenie tejto chyby by bolo časovo náročné, a keďže program funguje na referenčnom stroji a väčšine iných zariadení, ďalej sme tento problém nevyšetrovali.

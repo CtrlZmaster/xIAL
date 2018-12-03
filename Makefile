@@ -1,6 +1,6 @@
 # Project: IAL ...
 # File: Makefile
-# Title:
+# Title: 7. Minimum weight spanning tree
 # Description: -
 # Author: Michal Pospíšil (xpospi95@stud.fit.vutbr.cz)
 
@@ -19,7 +19,7 @@ clean:
 	rm -f *.o
 
 pack:
-	zip xpospi95.zip *.c *.h dokumentacia.pdf Makefile
+	zip -r ial-nahr-proj-7-18Z.zip *.c *.h examples dokumentacia.pdf Makefile
 
 ##### OBJECT FILES
 main.o: main.c main.h

@@ -57,7 +57,6 @@ int main(int argc, char *argv[])
 
     fclose(file_ptr);
 
-    //TODO: Kruskal/Prim
     #ifdef TIME
     clock_t begin = clock();
     #endif
@@ -210,16 +209,6 @@ void kruskal(graph_t *graph, partition_t *partition, uint64_t maxWeight)
     }
     else
         partition->found = false;
-
-
-// printf("\n\n\n");
-//     for (int x = 0; x < graph->noOfEdges; x++){
-//                     printf("  (f: %d, t: %d, w: %d,s: %c, inMST: %d)", graph->edges[x].from, graph->edges[x].to,graph->edges[x].weight, partition->status[x], partition->inMST[x]);
-
-//     }
-// printf("\n\n\n");
-
-
 }
 
 void execute(adj_matrix_t *matrix)
@@ -241,12 +230,6 @@ void execute(adj_matrix_t *matrix)
     pListHead->status = malloc(sizeof(uint8_t) * graph.noOfEdges);
     pListHead->inMST = malloc(sizeof(uint8_t) * graph.noOfEdges);
 
-    if (pListHead->status == NULL)
-    {
-        ;
-    }
-    //TODO check malloc
-
     for (uint16_t i = 0; i < graph.noOfEdges; i++)
     {
         pListHead->status[i] = 'o';
@@ -254,44 +237,16 @@ void execute(adj_matrix_t *matrix)
 
     partition_t *pListTMP = pListHead;
 
-
     kruskal(&graph, pListTMP, minWeight);
 
 
     while (1)
     {
 
- //printList(&pListHead, &graph);
-
-                pListTMP = pListHead;
+        pListTMP = pListHead;
 
         bool foundMinWeight = false;
 
-        // Calculate_MST of partition in the list
-        // while (pListTMP != NULL)
-        // {
-        //     if (pListTMP->found && pListTMP->weight <= minWeight)
-        //     {
-        //         printf("kruskal found new MST, weight: %ld\n", pListTMP->weight);
-        //         minWeight = pListTMP->weight;
-        //         foundMinWeight = true;
-        //         pListTMP = pListTMP->next;
-        //     }
-        //     else
-        //     { // remove it
-        //         printf("remove node start\n");
-
-        //         pListRemoveNode(&pListHead, &pListTMP);
-        //         printf("remove node end\n");
-        //         if (pListTMP)
-        //             printf("tmp not null\n");
-        //         else
-        //             printf("tmp is null\n");
-        //     }
-        // }
-
-        // if (!foundMinWeight)
-        //     break; // no ST found or all ST's are heavier than minimum
         pListTMP = pListHead;
         //  Get partition Ps ∈ List that contains the smallest spanning tree
         while (pListTMP != NULL)
@@ -302,7 +257,7 @@ void execute(adj_matrix_t *matrix)
                 foundMinWeight = true;
                 #ifndef TIME
                 // Write MST of Ps to Output_File
-                printMST(&graph, pListTMP);
+                printMST(&graph, pListTMP, matrix);
                 #endif
                 // Remove Ps from List
                 partition_t *tmp = pListTMP;
@@ -314,7 +269,6 @@ void execute(adj_matrix_t *matrix)
 
                 pListRemoveNode(&pListHead, &pListTMP);
 
-                //free(tmp);
                 break;
             }
             pListTMP = pListTMP->next;
@@ -350,57 +304,36 @@ void partition(partition_t *tmp, graph_t *graph, partition_t **pListHead)
 
     memcpy(p2.status, tmp->status, sizeof(uint8_t) * graph->noOfEdges);
 
-    /*p2.found = false;
-    p2.next = NULL;
-    //p2.status = malloc(sizeof(char) * graph->noOfEdges);
-    
-    if (p2.status == NULL){
-     printf("malloc null\n");
-
-    }
-       memcpy(p2.status, tmp->status, sizeof(char) * graph->noOfEdges);
-    printf("memcpy\n");
-*/
     //for each edge i in P do
     for (uint16_t i = 0; i < graph->noOfEdges; i++)
     {
         if (tmp->inMST[i]){
-        //if i not included in P and not excluded from P then
-        if (tmp->status[i] == 'o')
-        {
-            //make i excluded from P1;
-            p1.status[i] = 'e';
-            // make i included in P2;
-            p2.status[i] = 'i';
+        	//if i not included in P and not excluded from P then
+        	if (tmp->status[i] == 'o')
+        	{
+            	//make i excluded from P1;
+            	p1.status[i] = 'e';
+            	// make i included in P2;
+            	p2.status[i] = 'i';
 
-            //Calculate_MST (P1);
-            kruskal(graph, &p1, tmp->weight);
+            	//Calculate_MST (P1);
+            	kruskal(graph, &p1, tmp->weight);
 
+            	//if Connected (P1) then
+            	if (p1.found)
+            	{
+                	// add P1 to List;
+                	pListAppendNode(pListHead, &p1);
 
-// printf("\n--------------------------------------------------------------------------");
-//     for (int x = 0; x < graph->noOfEdges; x++){
-//                     printf("  (f: %d, t: %d, w: %d,s: %c, inMST: %d)", graph->edges[x].from, graph->edges[x].to,graph->edges[x].weight, p1.status[x], p1.inMST[x]);
+              		//  printf("found new partition\n");
+                    p1.status = malloc(sizeof(char) * graph->noOfEdges);
+            		p1.inMST = malloc(sizeof(char) * graph->noOfEdges);
+            	}
+            	//p1 = p2;
+            	p1.found = false;
 
-//     }
-// printf("\n-------------------------------------------------------------");
-
-            //if Connected (P1) then
-            if (p1.found)
-            {
-                // add P1 to List;
-                pListAppendNode(pListHead, &p1);
-
-              //  printf("found new partition\n");
-                          p1.status = malloc(sizeof(char) * graph->noOfEdges);
-            p1.inMST = malloc(sizeof(char) * graph->noOfEdges);
-
-            }
-
-            //p1 = p2;
-            p1.found = false;
-
-            memcpy(p1.status, p2.status, graph->noOfEdges);
-        }
+            	memcpy(p1.status, p2.status, graph->noOfEdges);
+        	}
         }
     }
             free (p1.status);
@@ -441,12 +374,6 @@ void pListRemoveNode(partition_t ** pListHead, partition_t **pListTMP)
         *pListHead = (*pListHead)->next;
         pListTMP = pListHead;
 
-        // if (pListTMP)
-        //     printf("head not null\n");
-        // else
-        //     printf("head is null\n");
-        //         printf("%d", (int) pListTMP);
-
         free(del->status);
         free(del->inMST);
         free(del);
@@ -454,7 +381,6 @@ void pListRemoveNode(partition_t ** pListHead, partition_t **pListTMP)
     }
     else
     { // not a head
-        printf("removing node\n");
 
         partition_t *tmp = *pListHead;
         while (tmp->next != *pListTMP)
@@ -470,31 +396,15 @@ void pListRemoveNode(partition_t ** pListHead, partition_t **pListTMP)
     }
 }
 
-void printMST(graph_t *graph, partition_t *partition)
+void printMST(graph_t *graph, partition_t *partition, adj_matrix_t * matrix)
 {
     printf("Found MST with weight %ld:\n", partition->weight);
     for (uint16_t i = 0; i < graph->noOfEdges; i++)
     {
         if (partition->inMST[i])
         {
-            printf("(%d , %d) - weight %d\n", graph->edges[i].from, graph->edges[i].to, graph->edges[i].weight);
+            printf("(%ls , %ls) -  %d\n", matrix->vertex_names[graph->edges[i].to], matrix->vertex_names[graph->edges[i].from], graph->edges[i].weight);
         }
-    }
-    printf("\n\n");
-}
-
-void printList(partition_t ** pListHead, graph_t * graph){
-    partition_t * tmp = *pListHead;
-    int i = 0;
-    printf("\nprinting list: \n");
-    while(tmp != NULL){
-        printf("node %d (w= %ld, found = %d):\n", i++, tmp->weight, tmp->found);
-        for(int x = 0; x < graph->noOfEdges; x++){
-            printf("  (f: %d, t: %d, w: %d,s: %c, inMST: %d)", graph->edges[x].from, graph->edges[x].to,graph->edges[x].weight, tmp->status[x], tmp->inMST[x]);
-        }
-        tmp = tmp->next;
-            printf("\n");
-
     }
     printf("\n\n");
 }

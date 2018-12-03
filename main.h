@@ -54,7 +54,7 @@ typedef struct partition {
 void loadEdges(adj_matrix_t *matrix, graph_t *graph);
 void dealloc(graph_t *graph);
 void execute(adj_matrix_t *matrix);
-void printMST(graph_t *graph, partition_t *partition);
+void printMST(graph_t *graph, partition_t *partition, adj_matrix_t * matrix);
 void partition(partition_t *tmp, graph_t *graph, partition_t **pListHead);
 void pListAppendNode(partition_t **pListHead, partition_t *node);
 void pListRemoveNode(partition_t **pListHead, partition_t **pListTMP);

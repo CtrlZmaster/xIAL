@@ -32,7 +32,7 @@ int main(int argc, char *argv[]) {
   }
 
   fclose(file_ptr);
-  
+
   for(uint8_t i = 0; i < matrix->vertices; i++) {
     wprintf(L"%ls, ",matrix->vertex_names[i]);
   }

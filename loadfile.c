@@ -27,6 +27,7 @@
  * -105 = Line is missing one or more elements.
  * -106 = Line has more elements than specified.
  * -107 = File contains unexpected content.
+ * -108 = Disconnected vertex found.
  */
 
 
@@ -314,6 +315,14 @@ int token_to_retval(token_t *temp_token, size_t index, char mode, wchar_t *verte
 
 // Function checks that matrix represents a graph
 int is_graph(adj_matrix_t *adj_matrix) {
+  // Test for disconnected vertices (max 255 vertices - can't init VLAs)
+
+  char *rows = calloc(adj_matrix->vertices, 1);
+  char *cols = calloc(adj_matrix->vertices, 1);
+  if(rows == NULL || cols == NULL) {
+      return -5;
+  }
+
   // Goes through half of the matrix
   for(int i = 0; i < adj_matrix->vertices; i++) {
     for(int j = i; j < adj_matrix->vertices; j++) {
@@ -327,8 +336,25 @@ int is_graph(adj_matrix_t *adj_matrix) {
       if(adj_matrix->matrix[i][j] != adj_matrix->matrix[j][i]) {
         return -104;
       }
+
+      if(adj_matrix->matrix[i][j] > 0) {
+        cols[i] = 1;
+      }
+
+      if(adj_matrix->matrix[j][i] > 0) {
+        rows[j] = 1;
+      }
+    }
+
+    // Looking for disconnected vertices
+    for(int i = 0; i < adj_matrix->vertices; i++) {
+      if(cols[i] == 0 || rows[i] == 0) {
+        return -108;
+      }
     }
   }
+  free(rows);
+  free(cols);
   return 0;
 }
 
@@ -398,7 +424,9 @@ void loaderror(int retval) {
       break;
     case -107:
       fprintf(stderr, "File contains unexpected content.\n");
-      break;
+    case -108:
+      fprintf(stderr, "Disconnected vertex found.\n");
+    break;
     default:
       break;
   }

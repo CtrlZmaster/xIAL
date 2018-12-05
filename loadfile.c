@@ -34,8 +34,8 @@
 #include "loadfile.h"
 
 
-//_Main loading function - loads matrix from a file named filename and then passes
-// matrix (if the file is valid) to adj_matrix.
+// Main loading function - loads matrix from a file named filename and then passes
+// matrix (if the file is valid) to adj_matrix. This should be called from outside of this module.
 int loadToMatrix(FILE *file_ptr, adj_matrix_t *adj_matrix) {
   int err_code = 0;
 
@@ -261,6 +261,7 @@ int lexFSM(FILE * file_ptr, uint8_t lex_num, token_t* temp_token, wchar_t *verte
   return err_code;
 }
 
+// Destroys contents of a previous token
 int flush_temp_token(token_t *temp_token) {
   free(temp_token->string);
   temp_token->length = 0;
@@ -273,6 +274,7 @@ int flush_temp_token(token_t *temp_token) {
   return 0;
 }
 
+// Enlarges token to allow storing bigger input "strings"
 int realloc_temp_token(token_t *temp_token, size_t size) {
   // Copy data to local stash
   wchar_t temp_data[size + 1];
@@ -293,6 +295,7 @@ int realloc_temp_token(token_t *temp_token, size_t size) {
   return 0;
 }
 
+// Converts and writes a token (edge weight or vertex name) to a corresponding array
 int token_to_retval(token_t *temp_token, size_t index, char mode, wchar_t *vertex_names[], int64_t edge_weights[]) {
   if(mode) {
     // Mode = 1 - Edge weights mode
@@ -313,7 +316,7 @@ int token_to_retval(token_t *temp_token, size_t index, char mode, wchar_t *verte
   return 0;
 }
 
-// Function checks that matrix represents a graph
+// Function checks that matrix represents an undirected graph
 int is_graph(adj_matrix_t *adj_matrix) {
   // Test for disconnected vertices (max 255 vertices - can't init VLAs)
   int64_t *rows = calloc(adj_matrix->vertices, sizeof(int64_t));
@@ -338,6 +341,7 @@ int is_graph(adj_matrix_t *adj_matrix) {
     }
   }
   // Looking for disconnected vertices - "bitwise or"-ing through lines - 0 if there are no connections
+  // Can be used only in undirected graphs - relies on symmetry in the matrix
   for(int i = 0; i < adj_matrix->vertices; i++) {
     for(int j = 0; j < adj_matrix->vertices; j++) {
       rows[i] |= adj_matrix->matrix[i][j];
@@ -346,6 +350,7 @@ int is_graph(adj_matrix_t *adj_matrix) {
   // Looking for rows with no connections
   for(int i = 0; i < adj_matrix->vertices; i++) {
     if(rows[i] == 0) {
+      free(rows);
       return -108;
     }
   }
@@ -376,7 +381,7 @@ void free_matrix(adj_matrix_t *adj_matrix) {
   free(adj_matrix);
 }
 
-// Writes error message to the stdout
+// Writes error message to stderr
 void loaderror(int retval) {
   fprintf(stderr, "ERROR: ");
   switch(retval) {

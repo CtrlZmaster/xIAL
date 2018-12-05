@@ -93,6 +93,10 @@ void loadEdges(adj_matrix_t *matrix, graph_t *graph)
 
     graph->noOfEdges = edgeCount;
     graph->edges = malloc(sizeof(edge_t) * edgeCount);
+    if(graph->edges == NULL){
+        loaderror(-5);
+        return;
+    }
 
     edgeCount = 0;
     for (uint8_t x = 0; x < graph->noOfVertices; x++)
@@ -222,14 +226,25 @@ void execute(adj_matrix_t *matrix)
     sortEdges(&graph);
 
     partition_t * pListHead = malloc(sizeof(partition_t));
-    //TODO check malloc
+    if(pListHead == NULL){
+        loaderror(-5);
+        return;
+    }
 
     pListHead->found = false;
     pListHead->status = NULL;
     pListHead->inMST = NULL;
     pListHead->next = NULL;
     pListHead->status = malloc(sizeof(uint8_t) * graph.noOfEdges);
+    if (pListHead->status == NULL){
+        loaderror(-5);
+        return;
+    }
     pListHead->inMST = malloc(sizeof(uint8_t) * graph.noOfEdges);
+    if (pListHead->inMST == NULL){
+        loaderror(-5);
+        return;
+    }
 
     for (uint16_t i = 0; i < graph.noOfEdges; i++)
     {
@@ -293,7 +308,15 @@ void partition(partition_t *tmp, graph_t *graph, partition_t **pListHead)
     p1.next = NULL;
 
     p1.status = malloc(sizeof(uint8_t) * graph->noOfEdges);
+    if(p1.status == NULL){
+        loaderror(-5);
+        return;
+    }
     p1.inMST = malloc(sizeof(uint8_t) * graph->noOfEdges);
+    if(p1.inMST == NULL){
+        loaderror(-5);
+        return;
+    }
 
 
     memcpy(p1.status, tmp->status, sizeof(uint8_t) * graph->noOfEdges);
@@ -301,7 +324,15 @@ void partition(partition_t *tmp, graph_t *graph, partition_t **pListHead)
     p2.found = false;
     p2.next = NULL;
     p2.status = malloc(sizeof(uint8_t) * graph->noOfEdges);
+    if(p2.status == NULL){
+        loaderror(-5);
+        return;
+    }
     p2.inMST = malloc(sizeof(uint8_t) * graph->noOfEdges);
+    if(p2.inMST == NULL){
+        loaderror(-5);
+        return;
+    }
 
     memcpy(p2.status, tmp->status, sizeof(uint8_t) * graph->noOfEdges);
 
@@ -326,9 +357,16 @@ void partition(partition_t *tmp, graph_t *graph, partition_t **pListHead)
                 	// add P1 to List;
                 	pListAppendNode(pListHead, &p1);
 
-              		//  printf("found new partition\n");
                     p1.status = malloc(sizeof(char) * graph->noOfEdges);
+                    if (p1.status == NULL){
+                        loaderror(-5);
+                        return;
+                    }
             		p1.inMST = malloc(sizeof(char) * graph->noOfEdges);
+                    if (p1.inMST == NULL){
+                        loaderror(-5);
+                        return;
+                    }
             	}
             	//p1 = p2;
             	p1.found = false;
@@ -347,6 +385,10 @@ void partition(partition_t *tmp, graph_t *graph, partition_t **pListHead)
 void pListAppendNode(partition_t **pListHead, partition_t *node)
 {
     partition_t * newNode = malloc(sizeof(partition_t));
+    if (newNode == NULL){
+        loaderror(-5);
+        return;
+    }
     newNode->next = NULL;
     newNode->status = node->status;
     newNode->inMST = node->inMST;

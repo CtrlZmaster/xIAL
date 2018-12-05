@@ -29,7 +29,7 @@ void print_help(void);
 typedef struct edge {
   uint8_t from;
   uint8_t to;
-  int32_t weight;
+  int64_t weight;
 } edge_t;
 
 typedef struct tree {

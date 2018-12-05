@@ -115,9 +115,9 @@ void sortEdges(graph_t *graph)
 
     edge_t tmp;
 
-    for (uint8_t i = 1; i < graph->noOfEdges; i++)
+    for (uint16_t i = 1; i < graph->noOfEdges; i++)
     {
-        for (uint8_t j = 0; j < graph->noOfEdges - 1; j++)
+        for (uint16_t j = 0; j < graph->noOfEdges - 1; j++)
         {
 
             if (graph->edges[j].weight > graph->edges[j + 1].weight)
@@ -404,7 +404,7 @@ void printMST(graph_t *graph, partition_t *partition, adj_matrix_t * matrix)
     {
         if (partition->inMST[i])
         {
-            printf("(%ls , %ls) -  %d\n", matrix->vertex_names[graph->edges[i].to], matrix->vertex_names[graph->edges[i].from], graph->edges[i].weight);
+            printf("(%ls , %ls) -  %ld\n", matrix->vertex_names[graph->edges[i].to], matrix->vertex_names[graph->edges[i].from], graph->edges[i].weight);
         }
     }
     printf("\n\n");

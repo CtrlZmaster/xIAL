@@ -84,7 +84,7 @@ void loadEdges(adj_matrix_t *matrix, graph_t *graph)
     {
         for (uint8_t y = 0; y < x; y++)
         {
-            if (matrix->matrix[x][y] > 0)
+            if (matrix->matrix[x][y] != 0)
             {
                 edgeCount++;
             }
@@ -99,7 +99,7 @@ void loadEdges(adj_matrix_t *matrix, graph_t *graph)
     {
         for (uint8_t y = 0; y < x; y++)
         {
-            if (matrix->matrix[x][y] > 0)
+            if (matrix->matrix[x][y] != 0)
             {
                 graph->edges[edgeCount].from = x;
                 graph->edges[edgeCount].to = y;

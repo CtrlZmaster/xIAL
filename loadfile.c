@@ -1,5 +1,5 @@
 /*
- * Project: IAL ...
+ * Project: IAL Replacement project
  * File: loadfile.c
  * Title: 7. Minimum weight spanning tree
  * Description: Module contains all functions for loading a file

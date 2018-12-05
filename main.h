@@ -1,5 +1,5 @@
 /*
- * Project: IAL ...
+ * Project: IAL Replacement project
  * File: main.h
  * Title: 7. Minimum weight spanning tree
  * Description: ...

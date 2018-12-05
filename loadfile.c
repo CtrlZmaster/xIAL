@@ -316,11 +316,9 @@ int token_to_retval(token_t *temp_token, size_t index, char mode, wchar_t *verte
 // Function checks that matrix represents a graph
 int is_graph(adj_matrix_t *adj_matrix) {
   // Test for disconnected vertices (max 255 vertices - can't init VLAs)
-
-  char *rows = calloc(adj_matrix->vertices, 1);
-  char *cols = calloc(adj_matrix->vertices, 1);
-  if(rows == NULL || cols == NULL) {
-      return -5;
+  int64_t *rows = calloc(adj_matrix->vertices, sizeof(int64_t));
+  if(rows == NULL) {
+    return -5;
   }
 
   // Goes through half of the matrix
@@ -337,24 +335,22 @@ int is_graph(adj_matrix_t *adj_matrix) {
         return -104;
       }
 
-      if(adj_matrix->matrix[i][j] > 0) {
-        cols[i] = 1;
-      }
-
-      if(adj_matrix->matrix[j][i] > 0) {
-        rows[j] = 1;
-      }
-    }
-
-    // Looking for disconnected vertices
-    for(int i = 0; i < adj_matrix->vertices; i++) {
-      if(cols[i] == 0 || rows[i] == 0) {
-        return -108;
-      }
     }
   }
+  // Looking for disconnected vertices - "bitwise or"-ing through lines - 0 if there are no connections
+  for(int i = 0; i < adj_matrix->vertices; i++) {
+    for(int j = 0; j < adj_matrix->vertices; j++) {
+      rows[i] |= adj_matrix->matrix[i][j];
+    }
+  }
+  // Looking for rows with no connections
+  for(int i = 0; i < adj_matrix->vertices; i++) {
+    if(rows[i] == 0) {
+      return -108;
+    }
+  }
+
   free(rows);
-  free(cols);
   return 0;
 }
 

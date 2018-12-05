@@ -105,14 +105,14 @@ int loadToMatrix(FILE *file_ptr, adj_matrix_t *adj_matrix) {
   }
 
   // Allocate rows
-  adj_matrix->matrix = malloc(adj_matrix->vertices * sizeof(int64_t*));
+  adj_matrix->matrix = malloc(adj_matrix->vertices * sizeof(uint32_t*));
   if(adj_matrix->matrix == NULL) {
     return -5;
   }
   // Iterate through rows
   for(uint8_t i = 0; i < adj_matrix->vertices; i++) {
     // Allocate all columns (create array of cells)
-    adj_matrix->matrix[i] = malloc(adj_matrix->vertices * sizeof(int64_t));
+    adj_matrix->matrix[i] = malloc(adj_matrix->vertices * sizeof(uint32_t));
     if(adj_matrix->matrix == NULL) {
       return -5;
     }
@@ -136,7 +136,7 @@ int loadToMatrix(FILE *file_ptr, adj_matrix_t *adj_matrix) {
 
 // Reads a line from file and divides it into lexemes. Internally uses two modes to distinguish between reading vertex names,
 // or edge weights - mode is detected based on passing NULL to vertex_names or edge_weights.
-int lexFSM(FILE * file_ptr, uint8_t lex_num, token_t* temp_token, wchar_t *vertex_names[], int64_t edge_weights[]) {
+int lexFSM(FILE * file_ptr, uint8_t lex_num, token_t* temp_token, wchar_t *vertex_names[], uint32_t edge_weights[]) {
   // Return values with error codes are saved here
   int err_code = 0;
   // Current char read from a file
@@ -211,7 +211,7 @@ int lexFSM(FILE * file_ptr, uint8_t lex_num, token_t* temp_token, wchar_t *verte
         num_flag = 1;
         esc_flag = 0;
         break;
-      case '-': case '+':
+      case '+':
         sign_flag = 1;
         esc_flag = 0;
         break;
@@ -296,10 +296,10 @@ int realloc_temp_token(token_t *temp_token, size_t size) {
 }
 
 // Converts and writes a token (edge weight or vertex name) to a corresponding array
-int token_to_retval(token_t *temp_token, size_t index, char mode, wchar_t *vertex_names[], int64_t edge_weights[]) {
+int token_to_retval(token_t *temp_token, size_t index, char mode, wchar_t *vertex_names[], uint32_t edge_weights[]) {
   if(mode) {
     // Mode = 1 - Edge weights mode
-    edge_weights[index] = wcstoll(temp_token->string, NULL, 10);
+    edge_weights[index] = wcstoul(temp_token->string, NULL, 10);
     if(errno == ERANGE) {
       return -102;
     }
@@ -319,7 +319,7 @@ int token_to_retval(token_t *temp_token, size_t index, char mode, wchar_t *verte
 // Function checks that matrix represents an undirected graph
 int is_graph(adj_matrix_t *adj_matrix) {
   // Test for disconnected vertices (max 255 vertices - can't init VLAs)
-  int64_t *rows = calloc(adj_matrix->vertices, sizeof(int64_t));
+  uint32_t *rows = calloc(adj_matrix->vertices, sizeof(uint32_t));
   if(rows == NULL) {
     return -5;
   }

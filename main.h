@@ -29,12 +29,12 @@ void print_help(void);
 typedef struct edge {
   uint8_t from;
   uint8_t to;
-  int64_t weight;
+  uint32_t weight;
 } edge_t;
 
 typedef struct tree {
 struct edge * edges;
-int64_t weight;
+uint32_t weight;
 } tree_t;
 
 typedef struct graph{
@@ -46,7 +46,7 @@ typedef struct graph{
 typedef struct partition {
   uint8_t * status;
   uint8_t * inMST;
-  int64_t weight;
+  uint32_t weight;
   bool found;
   struct partition * next;
 } partition_t;

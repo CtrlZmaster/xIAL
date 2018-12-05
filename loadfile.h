@@ -36,7 +36,7 @@ typedef struct token {
 
 // Holds the loaded matrix from a file
 typedef struct adj_matrix {
-  int64_t **matrix;           // The adjacency matrix
+  uint32_t **matrix;           // The adjacency matrix
   wchar_t **vertex_names;     // Vertex names
   uint8_t vertices;           // Number of vertices in a file
 } adj_matrix_t;
@@ -47,7 +47,7 @@ int loadToMatrix(FILE *file_ptr, adj_matrix_t *adj_matrix);
 
 // Reads a line from file and divides it into lexemes. Internally uses two modes to distinguish between reading vertex names,
 // or edge weights - mode is detected based on passing NULL to vertex_names or edge_weights.
-int lexFSM(FILE * file_ptr, uint8_t lex_num, token_t* temp_token, wchar_t *vertex_names[], int64_t edge_weights[]);
+int lexFSM(FILE * file_ptr, uint8_t lex_num, token_t* temp_token, wchar_t *vertex_names[], uint32_t edge_weights[]);
 
 // Destroys contents of a previous token
 int flush_temp_token(token_t *temp_token);
@@ -56,7 +56,7 @@ int flush_temp_token(token_t *temp_token);
 int realloc_temp_token(token_t *temp_token, size_t size);
 
 // Converts and writes a token (edge weight or vertex name) to a corresponding array
-int token_to_retval(token_t *temp_token, size_t index, char mode, wchar_t *vertex_names[], int64_t edge_weights[]);
+int token_to_retval(token_t *temp_token, size_t index, char mode, wchar_t *vertex_names[], uint32_t edge_weights[]);
 
 // Function checks that matrix represents an undirected graph
 int is_graph(adj_matrix_t *adj_matrix);

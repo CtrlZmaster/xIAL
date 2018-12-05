@@ -1,6 +1,6 @@
 # Informácie o testovacích súboroch
-1. 20 uzlov, 70 hrán
-2. 50 uzlov, 178 hrán
-3. 80 uzlov, 307 hrán
-4. 110 uzlov, 406 hrán
-5. 140 uzlov, 480 hrán
+1. 30 uzlov, 71 hrán, váhy [0,30]
+2. 60 uzlov, 134 hrán, váhy [0,70]
+3. 90 uzlov, 282 hrán, váhy [0,100]
+4. 120 uzlov, 417 hrán, váhy [0,250]
+5. 150 uzlov, 557 hrán, váhy [0,350]

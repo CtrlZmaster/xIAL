@@ -153,7 +153,7 @@ void kruskal(graph_t *graph, partition_t *partition, int64_t maxWeight)
 {
 
     uint16_t i;
-    int64_t mincost = 0;
+    uint32_t mincost = 0;
     uint8_t included = 0;
 
     // Every vertice is its own parent, no edges yet
@@ -215,7 +215,7 @@ void kruskal(graph_t *graph, partition_t *partition, int64_t maxWeight)
 void execute(adj_matrix_t *matrix)
 {
 
-    int64_t minWeight = INT64_MAX;
+    uint32_t minWeight = UINT32_MAX;
     graph_t graph;
     loadEdges(matrix, &graph);
 
@@ -399,12 +399,12 @@ void pListRemoveNode(partition_t ** pListHead, partition_t **pListTMP)
 
 void printMST(graph_t *graph, partition_t *partition, adj_matrix_t * matrix)
 {
-    printf("Found MST with weight %ld:\n", partition->weight);
+    printf("Found MST with weight %u:\n", partition->weight);
     for (uint16_t i = 0; i < graph->noOfEdges; i++)
     {
         if (partition->inMST[i])
         {
-            printf("(%ls , %ls) -  %ld\n", matrix->vertex_names[graph->edges[i].to], matrix->vertex_names[graph->edges[i].from], graph->edges[i].weight);
+            printf("(%ls , %ls) -  %u\n", matrix->vertex_names[graph->edges[i].to], matrix->vertex_names[graph->edges[i].from], graph->edges[i].weight);
         }
     }
     printf("\n\n");

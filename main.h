@@ -46,7 +46,7 @@ typedef struct graph{
 typedef struct partition {
   uint8_t * status;
   uint8_t * inMST;
-  uint64_t weight;
+  int64_t weight;
   bool found;
   struct partition * next;
 } partition_t;

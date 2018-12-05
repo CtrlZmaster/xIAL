@@ -149,15 +149,15 @@ void sortEdges(graph_t *graph)
  * MST weight is partition->weight
 **/
 
-void kruskal(graph_t *graph, partition_t *partition, uint64_t maxWeight)
+void kruskal(graph_t *graph, partition_t *partition, int64_t maxWeight)
 {
 
     uint16_t i;
-    uint64_t mincost = 0;
+    int64_t mincost = 0;
     uint8_t included = 0;
 
     // Every vertice is its own parent, no edges yet
-    uint8_t parent[graph->noOfVertices];
+    uint16_t parent[graph->noOfVertices];
     for (i = 0; i < graph->noOfVertices; i++)
     {
         parent[i] = i;
@@ -215,7 +215,7 @@ void kruskal(graph_t *graph, partition_t *partition, uint64_t maxWeight)
 void execute(adj_matrix_t *matrix)
 {
 
-    uint64_t minWeight = UINT64_MAX;
+    int64_t minWeight = INT64_MAX;
     graph_t graph;
     loadEdges(matrix, &graph);
 
